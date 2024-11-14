@@ -1,17 +1,31 @@
 import time
+from typing import List
+
 import numpy as np
 
 
 def match_timestamps(timestamps1: np.ndarray, timestamps2: np.ndarray) -> np.ndarray:
-
+    # create matching array
     matching = np.zeros(len(timestamps1), dtype=int)
+
+    # create len timestamps2 for optimization
+    lents2 = len(timestamps2)
+
+    # is timestamps empty check
+    if len(timestamps1) == 0 or lents2 == 0:
+        return matching
+
+    # create j pointer
     j = 0
 
     for i, t1 in enumerate(timestamps1):
-        # Move j to the closest timestamp in timestamps2 for the current timestamp t1
-        while j < len(timestamps2) - 1 and abs(timestamps2[j + 1] - t1) < abs(timestamps2[j] - t1):
+
+        # count difference
+        current_diff = abs(timestamps2[j] - t1)
+        # search index in timestamps2 for min diff
+        while j < lents2 - 1 and abs(timestamps2[j + 1] - t1) < current_diff:
             j += 1
-        # j is now at the best match index in timestamps2 for timestamps1[i]
+        # save the best
         matching[i] = j
 
     return matching
@@ -49,7 +63,7 @@ def main():
     end = time.time()
     print(f"Number of matches found: {len(matching)}")
     if len(matching) > 0:
-        print("Sample matches:", matching[:10])  # Print first 10 matches as a sample
+        print("Sample matches:", matching[10000:12000])
     print(f"Time: {end - start}")
 
 
