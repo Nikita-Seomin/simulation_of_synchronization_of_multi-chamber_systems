@@ -5,27 +5,21 @@ import numpy as np
 
 
 def match_timestamps(timestamps1: np.ndarray, timestamps2: np.ndarray) -> np.ndarray:
-    # create matching array
     matching = np.zeros(len(timestamps1), dtype=int)
 
-    # create len timestamps2 for optimization
-    lents2 = len(timestamps2)
-
-    # is timestamps empty check
-    if len(timestamps1) == 0 or lents2 == 0:
-        return matching
-
-    # create j pointer
+    # Initialize a variable `j to keep track of the closest timestamp in timestamps2
     j = 0
 
     for i, t1 in enumerate(timestamps1):
-
-        # count difference
+        # Calculate the absolute difference for current index j
         current_diff = abs(timestamps2[j] - t1)
-        # search index in timestamps2 for min diff
-        while j < lents2 - 1 and abs(timestamps2[j + 1] - t1) < current_diff:
+
+        # While the difference for the next index in timestamps2 is smaller, move `j forward
+        while j + 1 < len(timestamps2) and abs(timestamps2[j + 1] - t1) < current_diff:
             j += 1
-        # save the best
+            current_diff = abs(timestamps2[j] - t1)
+
+        # Store the index of the closest timestamp in matching array
         matching[i] = j
 
     return matching
@@ -53,9 +47,9 @@ def main():
        Setup and match timestamps between two cameras.
        """
     # Generate timestamps for the first camera
-    timestamps1 = make_timestamps(30, time.time() - 100, time.time() + 3600 * 2)
+    timestamps1 = make_timestamps(30, time.time() - 100, time.time() + 3600 * 2)    # np.array([0, 0.091, 0.5])
     # Generate timestamps for the second camera
-    timestamps2 = make_timestamps(60, time.time() + 200, time.time() + 3600 * 2.5)
+    timestamps2 = make_timestamps(60, time.time() + 200, time.time() + 3600 * 2.5)  # np.array([0.001, 0.09, 0.12, 0.6])
 
     start = time.time()
     # Find matching timestamps
@@ -63,8 +57,9 @@ def main():
     end = time.time()
     print(f"Number of matches found: {len(matching)}")
     if len(matching) > 0:
-        print("Sample matches:", matching[10000:12000])
+        print("Sample matches:", matching)
     print(f"Time: {end - start}")
+
 
 
 if __name__ == '__main__':
